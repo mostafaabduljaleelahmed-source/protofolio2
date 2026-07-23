@@ -8,6 +8,7 @@ import { Architecture } from './Architecture';
 import { EnergyRing } from './EnergyRing';
 import { FloatingCrystals } from './FloatingCrystals';
 import { Particles } from './Particles';
+import { ParticleAssembly } from './ParticleAssembly';
 import { Portrait } from './Portrait';
 import { audioEngine } from '../utils/audioEngine';
 
@@ -15,13 +16,32 @@ interface CameraProps {
   progress: React.MutableRefObject<number>;
 }
 
-const CameraRig: React.FC<CameraProps> = ({ progress }) => {
+// VIRTUAL 85MM CINEMA CAMERA RIG WITH FOCUS BREATHING & INERTIA
+const CinemaCameraRig: React.FC<CameraProps> = ({ progress }) => {
   useFrame((state) => {
+    const t = state.clock.elapsedTime;
     const p = progress.current;
-    const target = new THREE.Vector3(state.pointer.x * 0.22, 0.08 + p * 0.3, 11.8 - p * 2.9);
-    state.camera.position.lerp(target, 0.03);
-    state.camera.lookAt(0.18, -0.08 + p * 0.14, 0);
+
+    // Handheld micro noise & camera focus breathing
+    const noiseX = Math.sin(t * 0.45) * 0.08 + state.pointer.x * 0.35;
+    const noiseY = Math.cos(t * 0.35) * 0.06 + state.pointer.y * 0.25;
+
+    // 6-Stage Scroll Dolly Progression
+    // Stage 1 (0.00-0.15): Hero Portrait Zoom (z: 11.2)
+    // Stage 2 (0.15-0.40): Particle Dispersion Pullback (z: 14.5)
+    // Stage 3 (0.40-0.65): Neural Energy Focus (z: 10.8)
+    // Stage 6 (0.85-1.00): Return to Centerpiece (z: 11.2)
+    const targetZ = 11.2 + Math.sin(p * Math.PI) * 2.8 - p * 0.6;
+    const targetY = 0.08 + p * 0.6;
+
+    const targetPos = new THREE.Vector3(noiseX, noiseY + targetY, targetZ);
+    state.camera.position.lerp(targetPos, 0.035);
+
+    // Look-at target with smooth damping
+    const lookTarget = new THREE.Vector3(0.28 + state.pointer.x * 0.15, -0.08 + p * 0.25, 0);
+    state.camera.lookAt(lookTarget);
   });
+
   return null;
 };
 
@@ -37,26 +57,32 @@ const Scene: React.FC<SceneProps> = ({ progress, themeColor, onRingClick, onCrys
     <Canvas
       dpr={[1, 1.5]}
       gl={{ antialias: true, powerPreference: 'high-performance' }}
-      camera={{ fov: 32, position: [0, 0, 11.8] }}
+      camera={{ fov: 28, position: [0, 0, 11.2] }} // 85mm Lens Simulation (28 FOV)
       onCreated={({ scene, gl }) => {
-        scene.fog = new THREE.FogExp2('#080b12', 0.075);
+        scene.fog = new THREE.FogExp2('#080b12', 0.065);
         gl.toneMapping = THREE.ACESFilmicToneMapping;
-        gl.toneMappingExposure = 1.08;
+        gl.toneMappingExposure = 1.12;
       }}
     >
-      <ambientLight intensity={0.45} color="#7897b5" />
-      <pointLight position={[-5, 4, 2]} intensity={22} color={themeColor} distance={13} />
-      <pointLight position={[4, -1, 1]} intensity={13} color="#e89a61" distance={10} />
+      {/* APPLE KEYNOTE STUDIO 3-POINT LIGHTING */}
+      <ambientLight intensity={0.5} color="#7897b5" />
+      <directionalLight position={[6, 8, 6]} intensity={1.8} color="#fff4e6" /> {/* Warm Key */}
+      <pointLight position={[-6, 5, 2]} intensity={24} color={themeColor} distance={14} /> {/* Cyan Rim */}
+      <pointLight position={[5, -2, 2]} intensity={15} color="#e89a61" distance={11} /> {/* Orange Fill */}
+
       <Floor />
       <ObsidianForms />
       <Architecture progress={progress} themeColor={themeColor} />
       <EnergyRing progress={progress} onRingClick={onRingClick} />
       <FloatingCrystals onCrystalClick={onCrystalClick} />
       <Particles progress={progress} />
+      <ParticleAssembly progress={progress} />
+
       <Suspense fallback={null}>
         <Portrait progress={progress} themeColor={themeColor} />
       </Suspense>
-      <CameraRig progress={progress} />
+
+      <CinemaCameraRig progress={progress} />
     </Canvas>
   );
 };
@@ -103,7 +129,7 @@ export const WorldCanvas: React.FC = () => {
     <motion.div
       initial={{ opacity: 0, scale: 1.035 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 2.2, ease: [0.16, 1, 0.3, 1] }}
       style={{ position: 'fixed', inset: 0 }}
     >
       <Scene
