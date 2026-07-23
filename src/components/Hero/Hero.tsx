@@ -9,6 +9,11 @@ export const Hero: React.FC = () => {
     setExpandedPanel(expandedPanel === id ? null : id);
   };
 
+  const handleDiscover = (e: React.MouseEvent) => {
+    e.preventDefault();
+    window.dispatchEvent(new CustomEvent('discover-architect'));
+  };
+
   return (
     <section className="hero-playground" id="hero-section">
       <div className="slow-mo-aura"></div>
@@ -45,15 +50,15 @@ export const Hero: React.FC = () => {
             The person behind<br />the <em>systems.</em>
           </h1>
           <p className="hero-subtitle">
-            Full-stack .NET developer, AI automation builder, Flutter developer, and Computer Science student at Cairo University. Explore the living 3D environment.
+            Full-stack .NET developer, AI automation builder, Flutter developer, and Computer Science student at Cairo University. Move your cursor or click below to discover the living environment.
           </p>
 
           <div className="hero-cta-group">
-            <a href="#work" className="hero-btn primary">
-              Explore Systems &#8594;
-            </a>
-            <a href="#contact" className="hero-btn">
-              Get in Touch
+            <button className="hero-btn primary" onClick={handleDiscover}>
+              ✨ Discover Architect &#8594;
+            </button>
+            <a href="#work" className="hero-btn">
+              Explore Systems
             </a>
           </div>
 

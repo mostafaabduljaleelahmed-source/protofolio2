@@ -16,28 +16,20 @@ interface CameraProps {
   progress: React.MutableRefObject<number>;
 }
 
-// VIRTUAL 85MM CINEMA CAMERA RIG WITH FOCUS BREATHING & INERTIA
 const CinemaCameraRig: React.FC<CameraProps> = ({ progress }) => {
   useFrame((state) => {
     const t = state.clock.elapsedTime;
     const p = progress.current;
 
-    // Handheld micro noise & camera focus breathing
     const noiseX = Math.sin(t * 0.45) * 0.08 + state.pointer.x * 0.35;
     const noiseY = Math.cos(t * 0.35) * 0.06 + state.pointer.y * 0.25;
 
-    // 6-Stage Scroll Dolly Progression
-    // Stage 1 (0.00-0.15): Hero Portrait Zoom (z: 11.2)
-    // Stage 2 (0.15-0.40): Particle Dispersion Pullback (z: 14.5)
-    // Stage 3 (0.40-0.65): Neural Energy Focus (z: 10.8)
-    // Stage 6 (0.85-1.00): Return to Centerpiece (z: 11.2)
     const targetZ = 11.2 + Math.sin(p * Math.PI) * 2.8 - p * 0.6;
     const targetY = 0.08 + p * 0.6;
 
     const targetPos = new THREE.Vector3(noiseX, noiseY + targetY, targetZ);
     state.camera.position.lerp(targetPos, 0.035);
 
-    // Look-at target with smooth damping
     const lookTarget = new THREE.Vector3(0.28 + state.pointer.x * 0.15, -0.08 + p * 0.25, 0);
     state.camera.lookAt(lookTarget);
   });
@@ -48,27 +40,27 @@ const CinemaCameraRig: React.FC<CameraProps> = ({ progress }) => {
 interface SceneProps {
   progress: React.MutableRefObject<number>;
   themeColor: string;
+  isDiscovered: boolean;
   onRingClick: () => void;
   onCrystalClick: () => void;
 }
 
-const Scene: React.FC<SceneProps> = ({ progress, themeColor, onRingClick, onCrystalClick }) => {
+const Scene: React.FC<SceneProps> = ({ progress, themeColor, isDiscovered, onRingClick, onCrystalClick }) => {
   return (
     <Canvas
       dpr={[1, 1.5]}
       gl={{ antialias: true, powerPreference: 'high-performance' }}
-      camera={{ fov: 28, position: [0, 0, 11.2] }} // 85mm Lens Simulation (28 FOV)
+      camera={{ fov: 28, position: [0, 0, 11.2] }}
       onCreated={({ scene, gl }) => {
         scene.fog = new THREE.FogExp2('#080b12', 0.065);
         gl.toneMapping = THREE.ACESFilmicToneMapping;
         gl.toneMappingExposure = 1.12;
       }}
     >
-      {/* APPLE KEYNOTE STUDIO 3-POINT LIGHTING */}
-      <ambientLight intensity={0.5} color="#7897b5" />
-      <directionalLight position={[6, 8, 6]} intensity={1.8} color="#fff4e6" /> {/* Warm Key */}
-      <pointLight position={[-6, 5, 2]} intensity={24} color={themeColor} distance={14} /> {/* Cyan Rim */}
-      <pointLight position={[5, -2, 2]} intensity={15} color="#e89a61" distance={11} /> {/* Orange Fill */}
+      <ambientLight intensity={isDiscovered ? 0.5 : 0.2} color="#7897b5" />
+      <directionalLight position={[6, 8, 6]} intensity={isDiscovered ? 1.8 : 0.4} color="#fff4e6" />
+      <pointLight position={[-6, 5, 2]} intensity={isDiscovered ? 24 : 6} color={themeColor} distance={14} />
+      <pointLight position={[5, -2, 2]} intensity={isDiscovered ? 15 : 3} color="#e89a61" distance={11} />
 
       <Floor />
       <ObsidianForms />
@@ -76,10 +68,10 @@ const Scene: React.FC<SceneProps> = ({ progress, themeColor, onRingClick, onCrys
       <EnergyRing progress={progress} onRingClick={onRingClick} />
       <FloatingCrystals onCrystalClick={onCrystalClick} />
       <Particles progress={progress} />
-      <ParticleAssembly progress={progress} />
+      <ParticleAssembly progress={progress} isDiscovered={isDiscovered} />
 
       <Suspense fallback={null}>
-        <Portrait progress={progress} themeColor={themeColor} />
+        <Portrait progress={progress} themeColor={themeColor} isDiscovered={isDiscovered} />
       </Suspense>
 
       <CinemaCameraRig progress={progress} />
@@ -90,18 +82,45 @@ const Scene: React.FC<SceneProps> = ({ progress, themeColor, onRingClick, onCrys
 export const WorldCanvas: React.FC = () => {
   const progress = useRef<number>(0);
   const [themeIndex, setThemeIndex] = useState<number>(0);
+  const [isDiscovered, setIsDiscovered] = useState<boolean>(false);
   const themes = ['#88d9ff', '#e89a61', '#38ef7d', '#b967ff', '#ffffff'];
+
+  const triggerDiscovery = () => {
+    if (!isDiscovered) {
+      setIsDiscovered(true);
+      audioEngine.playCrystal();
+      if (window.showToast) {
+        window.showToast('IDENTITY DISCOVERED', "Welcome to Mostafa's Living Environment");
+      }
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
-      progress.current = Math.min(1, window.scrollY / Math.max(1, document.body.scrollHeight - window.innerHeight));
+      const p = Math.min(1, window.scrollY / Math.max(1, document.body.scrollHeight - window.innerHeight));
+      progress.current = p;
+      if (p > 0.02) triggerDiscovery();
     };
+
+    const handleMouseMove = () => {
+      // Automatic organic discovery after mouse exploration
+      triggerDiscovery();
+    };
+
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    window.addEventListener('mousemove', handleMouseMove, { once: true });
+    window.addEventListener('discover-architect', triggerDiscovery);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('discover-architect', triggerDiscovery);
+    };
+  }, [isDiscovered]);
 
   const cycleTheme = () => {
+    triggerDiscovery();
     const next = (themeIndex + 1) % themes.length;
     setThemeIndex(next);
     document.documentElement.style.setProperty('--theme-color', themes[next]);
@@ -112,6 +131,7 @@ export const WorldCanvas: React.FC = () => {
   };
 
   const triggerQuote = () => {
+    triggerDiscovery();
     const quotes = [
       '"Simplicity is prerequisite for reliability." — Edsger W. Dijkstra',
       '"First, solve the problem. Then, write the code." — John Johnson',
@@ -135,6 +155,7 @@ export const WorldCanvas: React.FC = () => {
       <Scene
         progress={progress}
         themeColor={themes[themeIndex]}
+        isDiscovered={isDiscovered}
         onRingClick={cycleTheme}
         onCrystalClick={triggerQuote}
       />

@@ -6,9 +6,10 @@ import { audioEngine } from '../utils/audioEngine';
 interface PortraitProps {
   progress: React.MutableRefObject<number>;
   themeColor: string;
+  isDiscovered: boolean;
 }
 
-export const Portrait: React.FC<PortraitProps> = ({ progress, themeColor }) => {
+export const Portrait: React.FC<PortraitProps> = ({ progress, themeColor, isDiscovered }) => {
   const groupRef = useRef<THREE.Group>(null!);
   const planeRef = useRef<THREE.Mesh>(null!);
   const glassesFlareRef = useRef<THREE.Mesh>(null!);
@@ -16,6 +17,7 @@ export const Portrait: React.FC<PortraitProps> = ({ progress, themeColor }) => {
 
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const scanProgress = useRef<number>(0);
+  const discoveryOpacity = useRef<number>(0);
 
   // Load high-resolution real portrait photo
   const texture = useLoader(THREE.TextureLoader, '/assets/jaleelo-portrait-alpha.png');
@@ -69,20 +71,17 @@ export const Portrait: React.FC<PortraitProps> = ({ progress, themeColor }) => {
     const t = state.clock.elapsedTime;
     const dt = delta * (window.sceneTimeScale || 1.0);
 
-    // Fade reveal during intro (0.5s to 3.5s) & 6-stage scroll opacity
-    const tIntro = THREE.MathUtils.smoothstep(t, 1.2, 3.8);
-    const scrollVal = progress.current;
+    // Smooth discovery materialization
+    discoveryOpacity.current = THREE.MathUtils.lerp(discoveryOpacity.current, isDiscovered ? 0.98 : 0.0, 0.035);
 
-    // Stage 1 (0.00-0.15): Full Opacity
-    // Stage 2 (0.15-0.40): Dissolves into particles (Opacity 0)
-    // Stage 6 (0.88-1.00): Reconnects at footer (Opacity 0.95)
+    const scrollVal = progress.current;
     const scrollOpacity = 1.0 - THREE.MathUtils.smoothstep(scrollVal, 0.12, 0.38) + THREE.MathUtils.smoothstep(scrollVal, 0.88, 1.0);
-    const targetOpacity = tIntro * Math.max(0, scrollOpacity) * 0.98;
+    const finalOpacity = discoveryOpacity.current * Math.max(0, scrollOpacity);
 
     if (planeRef.current) {
       const mat = planeRef.current.material as THREE.MeshBasicMaterial;
       if (mat) {
-        mat.opacity = THREE.MathUtils.lerp(mat.opacity, targetOpacity, 0.08);
+        mat.opacity = THREE.MathUtils.lerp(mat.opacity, finalOpacity, 0.08);
       }
 
       // Natural Hoodie Breathing (0.85 Hz rhythm)
@@ -108,7 +107,7 @@ export const Portrait: React.FC<PortraitProps> = ({ progress, themeColor }) => {
     }
 
     // Holographic scanline animation update
-    if (isHovered) {
+    if (isHovered && isDiscovered) {
       scanProgress.current = (scanProgress.current + dt * 1.4) % 1.0;
     } else {
       scanProgress.current = THREE.MathUtils.lerp(scanProgress.current, 0, 0.1);
@@ -121,8 +120,10 @@ export const Portrait: React.FC<PortraitProps> = ({ progress, themeColor }) => {
   });
 
   const handlePointerOver = () => {
-    setIsHovered(true);
-    audioEngine.playHover();
+    if (isDiscovered) {
+      setIsHovered(true);
+      audioEngine.playHover();
+    }
   };
 
   const handlePointerOut = () => {
@@ -132,9 +133,9 @@ export const Portrait: React.FC<PortraitProps> = ({ progress, themeColor }) => {
   return (
     <group ref={groupRef}>
       {/* LAYER 0: ATMOSPHERIC BACKGROUND RIM GLOW */}
-      <pointLight position={[3.6, 1.4, 0.8]} color={themeColor} intensity={6.5} distance={7} />
-      <pointLight position={[-0.8, 2.2, 0.4]} color="#88d9ff" intensity={4.2} distance={6} />
-      <pointLight position={[1.46, -0.13, 1.2]} color="#e89a61" intensity={2.5} distance={4} />
+      <pointLight position={[3.6, 1.4, 0.8]} color={themeColor} intensity={isDiscovered ? 6.5 : 1.5} distance={7} />
+      <pointLight position={[-0.8, 2.2, 0.4]} color="#88d9ff" intensity={isDiscovered ? 4.2 : 1.0} distance={6} />
+      <pointLight position={[1.46, -0.13, 1.2]} color="#e89a61" intensity={isDiscovered ? 2.5 : 0.5} distance={4} />
 
       {/* LAYER 1: MAIN REAL PORTRAIT PLANE */}
       <mesh
@@ -150,7 +151,7 @@ export const Portrait: React.FC<PortraitProps> = ({ progress, themeColor }) => {
       {/* LAYER 2: GLASSES SPECULAR REFLECTION FLARE PLANE */}
       <mesh ref={glassesFlareRef} position={[1.46, 0.45, 0.05]}>
         <planeGeometry args={[1.2, 0.35]} />
-        <meshBasicMaterial color="#ffffff" transparent opacity={0.15} blending={THREE.AdditiveBlending} depthWrite={false} />
+        <meshBasicMaterial color="#ffffff" transparent opacity={isDiscovered ? 0.15 : 0.0} blending={THREE.AdditiveBlending} depthWrite={false} />
       </mesh>
 
       {/* LAYER 3: HOLOGRAPHIC SCANLINE OVERLAY */}
