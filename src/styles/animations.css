@@ -1,0 +1,97 @@
+/* CUSTOM INTERACTIVE CURSOR */
+#custom-cursor {
+  position: fixed;
+  top: 0; left: 0;
+  width: 32px; height: 32px;
+  border: 1px solid var(--theme-color);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: var(--z-cursor);
+  transform: translate(-50%, -50%);
+  transition: width 0.2s ease, height 0.2s ease, border-color 0.3s ease, background-color 0.3s ease;
+  mix-blend-mode: screen;
+  box-shadow: 0 0 15px var(--blue-glow);
+}
+
+#cursor-dot {
+  position: fixed;
+  top: 0; left: 0;
+  width: 6px; height: 6px;
+  background: var(--ink);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: calc(var(--z-cursor) + 1);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 10px #ffffff;
+}
+
+body.cursor-hover #custom-cursor {
+  width: 54px; height: 54px;
+  background: rgba(136, 217, 255, 0.12);
+  border-color: var(--orange);
+  box-shadow: 0 0 25px var(--orange-glow);
+}
+
+body.cursor-active #custom-cursor {
+  transform: translate(-50%, -50%) scale(0.75);
+  background: rgba(232, 154, 97, 0.35);
+}
+
+/* MATRIX RAIN CANVAS OVERLAY */
+#matrix-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-grain) + 1);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+body.matrix-active #matrix-canvas {
+  opacity: 0.92;
+}
+
+/* BACKGROUND WORLD & GRAIN */
+#world {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-world);
+  pointer-events: none;
+  background: #080b12;
+}
+
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-grain);
+  pointer-events: none;
+  opacity: 0.08;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+  mix-blend-mode: soft-light;
+}
+
+/* INITIAL LOADER */
+.loader {
+  position: fixed; inset: 0; z-index: var(--z-loader);
+  background: #080b12;
+  display: grid; place-items: center;
+  transition: opacity 1.1s ease, visibility 1.1s ease;
+}
+.loader.off { opacity: 0; visibility: hidden; }
+.loader div { font: 11px 'DM Mono', monospace; letter-spacing: .18em; color: var(--blue); }
+.loader i {
+  display: inline-block; width: 52px; height: 1px;
+  background: var(--blue); vertical-align: middle; margin-right: 12px;
+  animation: scan 1.7s ease-in-out infinite;
+}
+@keyframes scan { 50% { transform: scaleX(.22); transform-origin: left; opacity: .35; } }
+
+/* PULSE ANIMATION */
+.pulse {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--emerald);
+  box-shadow: 0 0 14px var(--emerald);
+  animation: pulse 2.2s ease-in-out infinite;
+}
+@keyframes pulse { 50% { opacity: .3; transform: scale(.7); } }

@@ -1,0 +1,36 @@
+:root {
+  /* Color Palette Tokens */
+  --ink: #e9eff5;
+  --quiet: #97a7b8;
+  --blue: #88d9ff;
+  --blue-glow: rgba(136, 217, 255, 0.4);
+  --orange: #e89a61;
+  --orange-glow: rgba(232, 154, 97, 0.4);
+  --emerald: #38ef7d;
+  --violet: #b967ff;
+  --line: rgba(190, 222, 240, 0.14);
+  --void: #080b12;
+  --theme-color: #88d9ff;
+
+  /* Glassmorphism System */
+  --glass-bg: rgba(12, 18, 28, 0.65);
+  --glass-border: rgba(136, 217, 255, 0.18);
+  --glass-hover: rgba(136, 217, 255, 0.28);
+  --glass-blur: 16px;
+
+  /* Z-Index Hierarchy */
+  --z-world: 0;
+  --z-grain: 1;
+  --z-content: 2;
+  --z-header: 100;
+  --z-modal: 9000;
+  --z-cursor: 9999;
+  --z-loader: 20000;
+
+  /* Layout Limits */
+  --container-max-width: 1440px;
+  --padding-horizontal: clamp(20px, 4vw, 64px);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+}
