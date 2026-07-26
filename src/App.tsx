@@ -50,8 +50,11 @@ const PortfolioAppContent: React.FC = () => {
 
     // Initialize secret easter egg triggers (Ctrl+Shift+A & typing "admin")
     const triggerMgr = new AdminTriggerManager(() => {
-      showToast('SECRET TRIGGER DETECTED', 'Authenticating Admin Access...');
-      openPinModal();
+      if (adminAuthService.isAuthenticated()) {
+        openAdminPanel();
+      } else {
+        openPinModal();
+      }
     });
     const cleanupTriggers = triggerMgr.initGlobalListeners();
 
@@ -73,6 +76,7 @@ const PortfolioAppContent: React.FC = () => {
   }, [showToast, openPinModal, openAdminPanel]);
 
   const handlePinSuccess = () => {
+    adminAuthService.setAuthenticated(true);
     closePinModal();
     // Update session & URL route to /admin
     if (window.history.pushState) {

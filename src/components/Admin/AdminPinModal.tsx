@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useUI } from '../../context/UIContext';
 import { useAudio } from '../../context/AudioContext';
 import { ShieldCheck, ShieldAlert, Lock, X, RefreshCw, CheckCircle2 } from 'lucide-react';
+import { adminAuthService } from '../../services/adminAuthService';
 import gsap from 'gsap';
 
 interface AdminPinModalProps {
@@ -148,6 +149,7 @@ export const AdminPinModal: React.FC<AdminPinModalProps> = ({ isOpen, onClose, o
 
       if (response.ok && data.success) {
         // Success Animation & Transition
+        adminAuthService.setAuthenticated(true);
         playCrystal();
         setIsSuccess(true);
         setErrorMessage(null);
@@ -184,6 +186,7 @@ export const AdminPinModal: React.FC<AdminPinModalProps> = ({ isOpen, onClose, o
       // Fallback for local development if serverless API isn't served by Vite
       // Fallback check against environment or dev passcode
       if (pin === '8899' || pin === '2026') {
+        adminAuthService.setAuthenticated(true);
         playCrystal();
         setIsSuccess(true);
         showToast('ADMIN AUTHENTICATED', 'Local Admin Session Unlocked');

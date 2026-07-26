@@ -48,14 +48,20 @@ export const AdminPanelModal: React.FC = () => {
   };
 
   useEffect(() => {
-    if (isAdminPanelOpen && isAuthenticated) {
-      loadAdminData();
-      const unsubscribe = guestbookService.subscribe(() => {
+    if (isAdminPanelOpen) {
+      const auth = adminAuthService.isAuthenticated();
+      setIsAuthenticated(auth);
+      if (auth) {
         loadAdminData();
+      }
+      const unsubscribe = guestbookService.subscribe(() => {
+        if (adminAuthService.isAuthenticated()) {
+          loadAdminData();
+        }
       });
       return () => unsubscribe();
     }
-  }, [isAdminPanelOpen, isAuthenticated]);
+  }, [isAdminPanelOpen]);
 
   if (!isAdminPanelOpen) return null;
 
@@ -82,6 +88,10 @@ export const AdminPanelModal: React.FC = () => {
     adminAuthService.logout();
     setIsAuthenticated(false);
     showToast('ADMIN LOGOUT', 'Session terminated.');
+    closeAdminPanel();
+    if (window.history.pushState) {
+      window.history.pushState(null, '', '/');
+    }
   };
 
   const handleThemeChange = (color: string) => {
