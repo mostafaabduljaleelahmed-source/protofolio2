@@ -7,14 +7,21 @@
   <meta name="description" content="Jaleelo - Full-stack .NET Developer, AI Automation Engineer, and Computer Science Student at Cairo University. Interactive 3D Operating Environment.">
   <meta name="keywords" content="Mostafa Abduljaleel Ahmed, Jaleelo, .NET 8, C#, Flutter, Python, AI Automation, Three.js, React, Cairo University">
   <meta name="author" content="Mostafa Abduljaleel Ahmed (Jaleelo)">
-  
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://jaleelo.vercel.app">
+
+  <!-- Favicon / Page Tab Icon -->
+  <link rel="icon" type="image/png" href="/assets/JA.svg.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/JA.svg.png">
+
   <!-- Open Graph / Social Media Meta Tags -->
   <meta property="og:title" content="JALEELO / Interactive Operating Environment">
   <meta property="og:description" content="Full-stack .NET Developer, AI Automation Engineer, and Computer Science Student at Cairo University.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://jaleelo.vercel.app">
   <meta property="og:image" content="/assets/jaleelo-portrait-alpha.png">
-  
+
   <!-- Twitter Cards -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="JALEELO / Interactive Operating Environment">
@@ -23,14 +30,44 @@
 
   <title>JALEELO / Interactive Operating Environment</title>
 
-  <!-- Google Fonts -->
+  <!-- Google Fonts & Preconnect -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  
+
   <link rel="manifest" href="/site.webmanifest">
+
+  <!-- JSON-LD Structured Data Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Mostafa Abduljaleel Ahmed",
+    "alternateName": "Jaleelo",
+    "jobTitle": "Full-Stack .NET Developer & AI Automation Engineer",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "EduSphere"
+    },
+    "alumniOf": {
+      "@type": "EducationalOrganization",
+      "name": "Cairo University Faculty of Computers and Artificial Intelligence"
+    },
+    "url": "https://jaleelo.vercel.app",
+    "sameAs": [
+      "https://github.com/mostafaabduljaleelahmed-source",
+      "https://www.linkedin.com/in/mostafa-abduljaleel-7980893a3/"
+    ]
+  }
+  </script>
 </head>
 <body>
+  <!-- Skip to Main Content Link for A11y Screen Readers & Keyboard Users -->
+  <a href="#main-content" className="skip-to-content" style="position: absolute; top: -9999px; left: -9999px;">
+    Skip to main content
+  </a>
+
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
 </body>
