@@ -33,6 +33,10 @@ export const GuestbookAdminModal: React.FC = () => {
   useEffect(() => {
     if (isGuestbookAdminOpen && isAuthenticated) {
       loadEntries();
+      const unsubscribe = guestbookService.subscribe(() => {
+        loadEntries();
+      });
+      return () => unsubscribe();
     }
   }, [isGuestbookAdminOpen, isAuthenticated]);
 
@@ -137,7 +141,7 @@ export const GuestbookAdminModal: React.FC = () => {
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                Total Submissions: {entries.length} | Pending: {entries.filter(e => e.status === 'pending').length}
+                Total Submissions: {entries.length} | Pending Approval: {entries.filter(e => !e.approved || e.status === 'pending').length}
               </span>
               <button
                 onClick={loadEntries}

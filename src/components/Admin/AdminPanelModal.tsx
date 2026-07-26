@@ -50,6 +50,10 @@ export const AdminPanelModal: React.FC = () => {
   useEffect(() => {
     if (isAdminPanelOpen && isAuthenticated) {
       loadAdminData();
+      const unsubscribe = guestbookService.subscribe(() => {
+        loadAdminData();
+      });
+      return () => unsubscribe();
     }
   }, [isAdminPanelOpen, isAuthenticated]);
 
@@ -242,7 +246,7 @@ export const AdminPanelModal: React.FC = () => {
                   gap: '6px'
                 }}
               >
-                <MessageSquare size={15} /> Guestbook Moderation ({guestbookEntries.filter(e => e.status === 'pending').length})
+                <MessageSquare size={15} /> Guestbook Moderation ({guestbookEntries.filter(e => !e.approved || e.status === 'pending').length})
               </button>
 
               <button
@@ -324,18 +328,38 @@ export const AdminPanelModal: React.FC = () => {
             {/* TAB CONTENT 2: GUESTBOOK MODERATION */}
             {activeTab === 'guestbook' && (
               <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', background: 'rgba(255,255,255,0.02)', padding: '0.75rem 1rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                    <span style={{ color: 'var(--orange)', fontWeight: 700 }}>
+                      Pending Approval: {guestbookEntries.filter(e => !e.approved || e.status === 'pending').length}
+                    </span>
+                    <span style={{ margin: '0 8px', color: 'rgba(255,255,255,0.2)' }}>|</span>
+                    <span>
+                      Approved Public: {guestbookEntries.filter(e => e.approved || e.status === 'approved').length}
+                    </span>
+                  </div>
+                  <button
+                    onClick={loadAdminData}
+                    style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', fontFamily: 'DM Mono, monospace' }}
+                  >
+                    <RefreshCw size={13} className={loading ? 'spin' : ''} /> Refresh Sync
+                  </button>
+                </div>
+
                 {guestbookEntries.length === 0 ? (
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>No guestbook entries found.</p>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>No guestbook entries found in database.</p>
                 ) : (
-                  guestbookEntries.map(entry => (
-                    <GuestbookCard
-                      key={entry.id}
-                      entry={entry}
-                      isAdmin={true}
-                      onApprove={handleApproveGuestbook}
-                      onDelete={handleDeleteGuestbook}
-                    />
-                  ))
+                  guestbookEntries
+                    .sort((a, b) => (!a.approved ? -1 : 1) - (!b.approved ? -1 : 1))
+                    .map(entry => (
+                      <GuestbookCard
+                        key={entry.id}
+                        entry={entry}
+                        isAdmin={true}
+                        onApprove={handleApproveGuestbook}
+                        onDelete={handleDeleteGuestbook}
+                      />
+                    ))
                 )}
               </div>
             )}

@@ -4,9 +4,34 @@ const LOCAL_GUESTBOOK_KEY = 'jaleelo_guestbook_db';
 const LAST_SUBMIT_KEY = 'jaleelo_guestbook_last_submit';
 const RATE_LIMIT_MS = 15 * 60 * 1000; // 15 Minutes
 
+type GuestbookChangeListener = () => void;
+
 class GuestbookService {
   private supabaseUrl: string = import.meta.env.VITE_SUPABASE_URL || '';
   private supabaseAnonKey: string = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+  private listeners: Set<GuestbookChangeListener> = new Set();
+
+  constructor() {
+    // Listen for storage changes across tabs
+    if (typeof window !== 'undefined') {
+      window.addEventListener('storage', (e) => {
+        if (e.key === LOCAL_GUESTBOOK_KEY) {
+          this.notifyListeners();
+        }
+      });
+    }
+  }
+
+  public subscribe(listener: GuestbookChangeListener): () => void {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  }
+
+  private notifyListeners(): void {
+    this.listeners.forEach(fn => fn());
+  }
 
   private getLocalDB(): GuestbookEntry[] {
     try {
@@ -25,6 +50,7 @@ class GuestbookService {
         linkedIn: 'https://linkedin.com',
         country: 'United States',
         content: 'Remarkable architecture and **Three.js performance**. Mostafa\'s .NET background shows in the system precision!',
+        approved: true,
         status: 'approved',
         createdAt: new Date(Date.now() - 86400000 * 2).toISOString()
       },
@@ -35,6 +61,7 @@ class GuestbookService {
         linkedIn: 'https://linkedin.com',
         country: 'Egypt',
         content: 'Sublime interactive operating environment. Inspiring work for Cairo University developers!',
+        approved: true,
         status: 'approved',
         createdAt: new Date(Date.now() - 86400000).toISOString()
       }
@@ -47,6 +74,7 @@ class GuestbookService {
   private saveLocalDB(entries: GuestbookEntry[]): void {
     try {
       localStorage.setItem(LOCAL_GUESTBOOK_KEY, JSON.stringify(entries));
+      this.notifyListeners();
     } catch {
       // LocalStorage quota fallback
     }
@@ -94,9 +122,10 @@ class GuestbookService {
   }
 
   public async fetchApprovedEntries(): Promise<GuestbookEntry[]> {
+    let remoteEntries: GuestbookEntry[] = [];
     if (this.supabaseUrl && this.supabaseAnonKey) {
       try {
-        const res = await fetch(`${this.supabaseUrl}/rest/v1/guestbook_entries?status=eq.approved&order=created_at.desc`, {
+        const res = await fetch(`${this.supabaseUrl}/rest/v1/guestbook_entries?or=(approved.eq.true,status.eq.approved)&order=created_at.desc`, {
           headers: {
             'apikey': this.supabaseAnonKey,
             'Authorization': `Bearer ${this.supabaseAnonKey}`
@@ -104,30 +133,70 @@ class GuestbookService {
         });
         if (res.ok) {
           const data = await res.json();
-          return data.map((d: any) => ({
+          remoteEntries = data.map((d: any) => ({
             id: d.id,
             authorName: d.author_name,
             company: d.company,
             linkedIn: d.linkedin,
             country: d.country,
             content: d.content,
-            status: d.status,
+            approved: d.approved ?? (d.status === 'approved'),
+            status: d.status || (d.approved ? 'approved' : 'pending'),
             createdAt: d.created_at,
             updatedAt: d.updated_at
           }));
         }
       } catch {
-        // Fallback to local
+        // Fallback
+      }
+    }
+
+    const local = this.getLocalDB().filter(e => e.approved || e.status === 'approved');
+    
+    // Merge remote and local without duplicates
+    const map = new Map<string, GuestbookEntry>();
+    remoteEntries.forEach(e => map.set(e.id, e));
+    local.forEach(e => map.set(e.id, e));
+
+    return Array.from(map.values()).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  public async fetchAllEntriesForAdmin(): Promise<GuestbookEntry[]> {
+    let remoteEntries: GuestbookEntry[] = [];
+    if (this.supabaseUrl && this.supabaseAnonKey) {
+      try {
+        const res = await fetch(`${this.supabaseUrl}/rest/v1/guestbook_entries?order=created_at.desc`, {
+          headers: {
+            'apikey': this.supabaseAnonKey,
+            'Authorization': `Bearer ${this.supabaseAnonKey}`
+          }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          remoteEntries = data.map((d: any) => ({
+            id: d.id,
+            authorName: d.author_name,
+            company: d.company,
+            linkedIn: d.linkedin,
+            country: d.country,
+            content: d.content,
+            approved: d.approved ?? (d.status === 'approved'),
+            status: d.status || (d.approved ? 'approved' : 'pending'),
+            createdAt: d.created_at,
+            updatedAt: d.updated_at
+          }));
+        }
+      } catch {
+        // Fallback
       }
     }
 
     const local = this.getLocalDB();
-    return local.filter(e => e.status === 'approved').sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  }
+    const map = new Map<string, GuestbookEntry>();
+    remoteEntries.forEach(e => map.set(e.id, e));
+    local.forEach(e => map.set(e.id, e));
 
-  public async fetchAllEntriesForAdmin(): Promise<GuestbookEntry[]> {
-    const local = this.getLocalDB();
-    return local.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    return Array.from(map.values()).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }
 
   public async submitEntry(data: {
@@ -159,18 +228,20 @@ class GuestbookService {
       linkedIn: data.linkedIn?.trim() || undefined,
       country,
       content: data.content.trim(),
+      approved: false,
       status: 'pending',
       createdAt: new Date().toISOString()
     };
 
     if (this.supabaseUrl && this.supabaseAnonKey) {
       try {
-        await fetch(`${this.supabaseUrl}/rest/v1/guestbook_entries`, {
+        const res = await fetch(`${this.supabaseUrl}/rest/v1/guestbook_entries`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'apikey': this.supabaseAnonKey,
-            'Authorization': `Bearer ${this.supabaseAnonKey}`
+            'Authorization': `Bearer ${this.supabaseAnonKey}`,
+            'Prefer': 'return=representation'
           },
           body: JSON.stringify({
             author_name: newEntry.authorName,
@@ -178,11 +249,19 @@ class GuestbookService {
             linkedin: newEntry.linkedIn,
             country: newEntry.country,
             content: newEntry.content,
+            approved: false,
             status: 'pending'
           })
         });
+
+        if (res.ok) {
+          const insertedData = await res.json();
+          if (Array.isArray(insertedData) && insertedData.length > 0) {
+            newEntry.id = insertedData[0].id;
+          }
+        }
       } catch {
-        // Fallback
+        // Fallback to local insertion
       }
     }
 
@@ -199,9 +278,30 @@ class GuestbookService {
   }
 
   public async adminApproveEntry(id: string): Promise<void> {
+    if (this.supabaseUrl && this.supabaseAnonKey) {
+      try {
+        await fetch(`${this.supabaseUrl}/rest/v1/guestbook_entries?id=eq.${id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': this.supabaseAnonKey,
+            'Authorization': `Bearer ${this.supabaseAnonKey}`
+          },
+          body: JSON.stringify({
+            approved: true,
+            status: 'approved',
+            updated_at: new Date().toISOString()
+          })
+        });
+      } catch {
+        // Fallback
+      }
+    }
+
     const db = this.getLocalDB();
     const target = db.find(e => e.id === id);
     if (target) {
+      target.approved = true;
       target.status = 'approved';
       target.updatedAt = new Date().toISOString();
       this.saveLocalDB(db);
@@ -209,12 +309,45 @@ class GuestbookService {
   }
 
   public async adminDeleteEntry(id: string): Promise<void> {
+    if (this.supabaseUrl && this.supabaseAnonKey) {
+      try {
+        await fetch(`${this.supabaseUrl}/rest/v1/guestbook_entries?id=eq.${id}`, {
+          method: 'DELETE',
+          headers: {
+            'apikey': this.supabaseAnonKey,
+            'Authorization': `Bearer ${this.supabaseAnonKey}`
+          }
+        });
+      } catch {
+        // Fallback
+      }
+    }
+
     const db = this.getLocalDB();
     const filtered = db.filter(e => e.id !== id);
     this.saveLocalDB(filtered);
   }
 
   public async adminUpdateEntry(id: string, updatedContent: string): Promise<void> {
+    if (this.supabaseUrl && this.supabaseAnonKey) {
+      try {
+        await fetch(`${this.supabaseUrl}/rest/v1/guestbook_entries?id=eq.${id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': this.supabaseAnonKey,
+            'Authorization': `Bearer ${this.supabaseAnonKey}`
+          },
+          body: JSON.stringify({
+            content: updatedContent,
+            updated_at: new Date().toISOString()
+          })
+        });
+      } catch {
+        // Fallback
+      }
+    }
+
     const db = this.getLocalDB();
     const target = db.find(e => e.id === id);
     if (target) {

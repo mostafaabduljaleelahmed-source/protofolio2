@@ -64,6 +64,7 @@ export interface GuestbookEntry {
   linkedIn?: string;
   country: string;
   content: string;
+  approved: boolean;
   status: 'pending' | 'approved' | 'rejected';
   createdAt: string;
   updatedAt?: string;
