@@ -10,7 +10,8 @@ import { FloatingCrystals } from './FloatingCrystals';
 import { Particles } from './Particles';
 import { ParticleAssembly } from './ParticleAssembly';
 import { Portrait } from './Portrait';
-import { audioEngine } from '../utils/audioEngine';
+import { useUI } from '../context/UIContext';
+import { useAudio } from '../context/AudioContext';
 
 interface CameraProps {
   progress: React.MutableRefObject<number>;
@@ -80,6 +81,8 @@ const Scene: React.FC<SceneProps> = ({ progress, themeColor, isDiscovered, onRin
 };
 
 export const WorldCanvas: React.FC = () => {
+  const { showToast } = useUI();
+  const { playCrystal, playTheme } = useAudio();
   const progress = useRef<number>(0);
   const [themeIndex, setThemeIndex] = useState<number>(0);
   const [isDiscovered, setIsDiscovered] = useState<boolean>(false);
@@ -88,10 +91,8 @@ export const WorldCanvas: React.FC = () => {
   const triggerDiscovery = () => {
     if (!isDiscovered) {
       setIsDiscovered(true);
-      audioEngine.playCrystal();
-      if (window.showToast) {
-        window.showToast('IDENTITY DISCOVERED', "Welcome to Mostafa's Living Environment");
-      }
+      playCrystal();
+      showToast('IDENTITY DISCOVERED', "Welcome to Mostafa's Living Environment");
     }
   };
 
@@ -103,7 +104,6 @@ export const WorldCanvas: React.FC = () => {
     };
 
     const handleMouseMove = () => {
-      // Automatic organic discovery after mouse exploration
       triggerDiscovery();
     };
 
@@ -124,10 +124,8 @@ export const WorldCanvas: React.FC = () => {
     const next = (themeIndex + 1) % themes.length;
     setThemeIndex(next);
     document.documentElement.style.setProperty('--theme-color', themes[next]);
-    audioEngine.playTheme();
-    if (window.showToast) {
-      window.showToast('LIGHTING THEME SWITCHED', `Active hue: ${themes[next]}`);
-    }
+    playTheme();
+    showToast('LIGHTING THEME SWITCHED', `Active hue: ${themes[next]}`);
   };
 
   const triggerQuote = () => {
@@ -139,10 +137,8 @@ export const WorldCanvas: React.FC = () => {
       '"The code is only the trace left by a solved problem." — Jaleelo'
     ];
     const q = quotes[Math.floor(Math.random() * quotes.length)];
-    audioEngine.playCrystal();
-    if (window.showToast) {
-      window.showToast('ENGINEERING WISDOM', q);
-    }
+    playCrystal();
+    showToast('ENGINEERING WISDOM', q);
   };
 
   return (

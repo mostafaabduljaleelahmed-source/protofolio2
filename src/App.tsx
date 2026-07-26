@@ -1,44 +1,66 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense, lazy } from 'react';
+import { UIProvider, useUI } from './context/UIContext';
+import { AudioProvider } from './context/AudioContext';
 import { WorldCanvas } from './three/WorldCanvas';
 import { Header } from './components/Header/Header';
 import { Hero } from './components/Hero/Hero';
 import { About } from './components/About/About';
 import { Projects } from './components/Projects/Projects';
 import { Experiments } from './components/Experiments/Experiments';
+import { GuestbookSection } from './components/Guestbook/GuestbookSection';
 import { Contact } from './components/Contact/Contact';
 import { Footer } from './components/Footer/Footer';
-import { CommandPalette } from './components/CommandPalette/CommandPalette';
-import { AIChat } from './components/AIChat/AIChat';
 import { Toast } from './components/Toast/Toast';
 import { Loader } from './components/Loader/Loader';
 import { initCustomCursor } from './utils/cursor';
-import { audioEngine } from './utils/audioEngine';
+import { analyticsService } from './services/analyticsService';
+import { easterEggService } from './services/easterEggService';
 
-export const App: React.FC = () => {
+// Lazy-loaded interactive modals for optimized main-thread parsing
+const CommandPalette = lazy(() =>
+  import('./components/CommandPalette/CommandPalette').then(m => ({ default: m.CommandPalette }))
+);
+const AIChat = lazy(() =>
+  import('./components/AIChat/AIChat').then(m => ({ default: m.AIChat }))
+);
+const AnalyticsDashboard = lazy(() =>
+  import('./components/Analytics/AnalyticsDashboard').then(m => ({ default: m.AnalyticsDashboard }))
+);
+const GuestbookFormModal = lazy(() =>
+  import('./components/Guestbook/GuestbookFormModal').then(m => ({ default: m.GuestbookFormModal }))
+);
+const GuestbookAdminModal = lazy(() =>
+  import('./components/Guestbook/GuestbookAdminModal').then(m => ({ default: m.GuestbookAdminModal }))
+);
+const AdminPanelModal = lazy(() =>
+  import('./components/Admin/AdminPanelModal').then(m => ({ default: m.AdminPanelModal }))
+);
+const AchievementsModal = lazy(() =>
+  import('./components/EasterEggs/AchievementsModal').then(m => ({ default: m.AchievementsModal }))
+);
+
+const PortfolioAppContent: React.FC = () => {
+  const { showToast } = useUI();
+
   useEffect(() => {
     const cleanupCursor = initCustomCursor();
-
-    const handleFirstInteraction = () => {
-      audioEngine.init();
-      window.removeEventListener('click', handleFirstInteraction);
-      window.removeEventListener('keydown', handleFirstInteraction);
-    };
-    window.addEventListener('click', handleFirstInteraction);
-    window.addEventListener('keydown', handleFirstInteraction);
+    const cleanupKonami = easterEggService.init(showToast);
+    analyticsService.trackPageView();
 
     return () => {
       cleanupCursor();
+      cleanupKonami();
     };
-  }, []);
+  }, [showToast]);
 
   return (
     <>
-      {/* CUSTOM CURSOR */}
-      <div id="custom-cursor"></div>
-      <div id="cursor-dot"></div>
+      {/* CUSTOM CURSOR ACCESSIBLE TARGETS */}
+      <div id="custom-cursor" aria-hidden="true"></div>
+      <div id="cursor-dot" aria-hidden="true"></div>
 
       {/* MATRIX CANVAS OVERLAY */}
-      <canvas id="matrix-canvas"></canvas>
+      <canvas id="matrix-canvas" aria-hidden="true"></canvas>
 
       {/* 3D LIVING WORLD CANVAS & GRAIN */}
       <WorldCanvas />
@@ -49,20 +71,38 @@ export const App: React.FC = () => {
 
       {/* HEADER & MAIN SECTIONS */}
       <Header />
-      <main id="top">
+      <main id="main-content" tabIndex={-1}>
         <Hero />
         <About />
         <Projects />
         <Experiments />
+        <GuestbookSection />
         <Contact />
       </main>
 
       <Footer />
 
-      {/* INTERACTIVE MODALS & WIDGETS */}
-      <CommandPalette />
-      <AIChat />
+      {/* INTERACTIVE MODALS & WIDGETS WITH SUSPENSE FALLBACK */}
+      <Suspense fallback={null}>
+        <CommandPalette />
+        <AIChat />
+        <AnalyticsDashboard />
+        <GuestbookFormModal />
+        <GuestbookAdminModal />
+        <AdminPanelModal />
+        <AchievementsModal />
+      </Suspense>
       <Toast />
     </>
+  );
+};
+
+export const App: React.FC = () => {
+  return (
+    <UIProvider>
+      <AudioProvider>
+        <PortfolioAppContent />
+      </AudioProvider>
+    </UIProvider>
   );
 };
