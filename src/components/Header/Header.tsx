@@ -6,28 +6,29 @@ import { easterEggService } from '../../services/easterEggService';
 import { PenTool, Trophy } from 'lucide-react';
 
 export const Header: React.FC = () => {
-  const { showToast, setMatrixMode, openCommandPalette, openGuestbookForm, openAchievements } = useUI();
+  const { showToast, setMatrixMode, openCommandPalette, openGuestbookForm, openAchievements, openPinModal } = useUI();
   const { isMuted, toggleMute, playClick } = useAudio();
-  const [logoClicks, setLogoClicks] = useState<number>(0);
+  const [clickTimestamps, setClickTimestamps] = useState<number[]>([]);
 
   const handleLogoClick = (e: React.MouseEvent) => {
     e.preventDefault();
     playClick();
-    const next = logoClicks + 1;
-    if (next >= 5) {
-      setLogoClicks(0);
+
+    const now = Date.now();
+    const recent = [...clickTimestamps, now].filter(t => now - t <= 3000);
+    setClickTimestamps(recent);
+
+    if (recent.length >= 5) {
+      setClickTimestamps([]);
       easterEggService.unlockAchievement('dev_mode');
-      showToast('DEV MODE UNLOCKED', 'Diagnostics: 120 FPS Target | WebGL 2.0 | Memory: Clean');
-      setMatrixMode(prev => !prev);
-    } else {
-      setLogoClicks(next);
-      showToast('SYSTEM LOGO', `Click ${5 - next} more times for Dev Mode!`);
+      showToast('SECRET TRIGGER DETECTED', 'Authenticating Admin Access...');
+      openPinModal();
     }
   };
 
   return (
     <header>
-      <a className="brand" id="brand-logo" title="Click 5 times for Dev Stats" onClick={handleLogoClick} href="#top">
+      <a className="brand" id="brand-logo" title="JALEELO Portfolio Operating System" onClick={handleLogoClick} href="#top">
         JALEEL<b>O</b> <span className="brand-badge">{SITE_CONFIG.version}</span>
       </a>
 

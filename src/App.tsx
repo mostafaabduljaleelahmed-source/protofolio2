@@ -16,6 +16,10 @@ import { initCustomCursor } from './utils/cursor';
 import { analyticsService } from './services/analyticsService';
 import { easterEggService } from './services/easterEggService';
 
+import { AdminPinModal } from './components/Admin/AdminPinModal';
+import { AdminTriggerManager } from './utils/adminTriggers';
+import { adminAuthService } from './services/adminAuthService';
+
 // Lazy-loaded interactive modals for optimized main-thread parsing
 const CommandPalette = lazy(() =>
   import('./components/CommandPalette/CommandPalette').then(m => ({ default: m.CommandPalette }))
@@ -37,18 +41,45 @@ const AchievementsModal = lazy(() =>
 );
 
 const PortfolioAppContent: React.FC = () => {
-  const { showToast } = useUI();
+  const { showToast, isPinModalOpen, openPinModal, closePinModal, openAdminPanel } = useUI();
 
   useEffect(() => {
     const cleanupCursor = initCustomCursor();
     const cleanupKonami = easterEggService.init(showToast);
     analyticsService.trackPageView();
 
+    // Initialize secret easter egg triggers (Ctrl+Shift+A & typing "admin")
+    const triggerMgr = new AdminTriggerManager(() => {
+      showToast('SECRET TRIGGER DETECTED', 'Authenticating Admin Access...');
+      openPinModal();
+    });
+    const cleanupTriggers = triggerMgr.initGlobalListeners();
+
+    // Check direct URL route /admin protection
+    const path = window.location.pathname;
+    if (path === '/admin' || window.location.hash === '#admin') {
+      if (adminAuthService.isAuthenticated()) {
+        openAdminPanel();
+      } else {
+        openPinModal();
+      }
+    }
+
     return () => {
       cleanupCursor();
       cleanupKonami();
+      cleanupTriggers();
     };
-  }, [showToast]);
+  }, [showToast, openPinModal, openAdminPanel]);
+
+  const handlePinSuccess = () => {
+    closePinModal();
+    // Update session & URL route to /admin
+    if (window.history.pushState) {
+      window.history.pushState(null, '', '/admin');
+    }
+    openAdminPanel();
+  };
 
   return (
     <>
@@ -88,6 +119,7 @@ const PortfolioAppContent: React.FC = () => {
         <AdminPanelModal />
         <AchievementsModal />
       </Suspense>
+      <AdminPinModal isOpen={isPinModalOpen} onClose={closePinModal} onSuccess={handlePinSuccess} />
       <Toast />
     </>
   );

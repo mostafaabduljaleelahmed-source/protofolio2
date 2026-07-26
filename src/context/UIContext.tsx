@@ -31,6 +31,9 @@ export interface UIContextType {
   openAdminPanel: () => void;
   closeAdminPanel: () => void;
   toggleAdminPanel: () => void;
+  isPinModalOpen: boolean;
+  openPinModal: () => void;
+  closePinModal: () => void;
   isAchievementsOpen: boolean;
   openAchievements: () => void;
   closeAchievements: () => void;
@@ -51,6 +54,7 @@ export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isGuestbookFormOpen, setIsGuestbookFormOpen] = useState<boolean>(false);
   const [isGuestbookAdminOpen, setIsGuestbookAdminOpen] = useState<boolean>(false);
   const [isAdminPanelOpen, setIsAdminPanelOpen] = useState<boolean>(false);
+  const [isPinModalOpen, setIsPinModalOpen] = useState<boolean>(false);
   const [isAchievementsOpen, setIsAchievementsOpen] = useState<boolean>(false);
   const [matrixMode, setMatrixMode] = useState<boolean>(false);
   const [toast, setToast] = useState<ToastState>({
@@ -83,6 +87,9 @@ export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const openAdminPanel = useCallback(() => setIsAdminPanelOpen(true), []);
   const closeAdminPanel = useCallback(() => setIsAdminPanelOpen(false), []);
   const toggleAdminPanel = useCallback(() => setIsAdminPanelOpen(prev => !prev), []);
+
+  const openPinModal = useCallback(() => setIsPinModalOpen(true), []);
+  const closePinModal = useCallback(() => setIsPinModalOpen(false), []);
 
   const openAchievements = useCallback(() => setIsAchievementsOpen(true), []);
   const closeAchievements = useCallback(() => setIsAchievementsOpen(false), []);
@@ -130,6 +137,9 @@ export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         openAdminPanel,
         closeAdminPanel,
         toggleAdminPanel,
+        isPinModalOpen,
+        openPinModal,
+        closePinModal,
         isAchievementsOpen,
         openAchievements,
         closeAchievements,
