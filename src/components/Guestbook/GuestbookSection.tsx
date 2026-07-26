@@ -22,6 +22,10 @@ export const GuestbookSection: React.FC = () => {
 
   useEffect(() => {
     fetchEntries();
+    const unsubscribe = guestbookService.subscribe(() => {
+      fetchEntries();
+    });
+    return () => unsubscribe();
   }, []);
 
   return (

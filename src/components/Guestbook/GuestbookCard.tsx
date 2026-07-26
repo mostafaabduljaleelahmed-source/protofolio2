@@ -20,13 +20,15 @@ export const GuestbookCard: React.FC<GuestbookCardProps> = ({
   onEdit,
 }) => {
   const renderedContent = guestbookService.renderMarkdown(entry.content);
+  const isApproved = entry.approved === true || entry.status === 'approved';
+  const isPending = !isApproved || entry.status === 'pending';
 
   return (
     <article
       className="guestbook-card"
       style={{
         background: 'rgba(255, 255, 255, 0.025)',
-        border: entry.status === 'pending' ? '1px dashed var(--orange)' : '1px solid rgba(255, 255, 255, 0.08)',
+        border: isPending ? '1px dashed var(--orange)' : '1px solid rgba(255, 255, 255, 0.08)',
         borderRadius: '12px',
         padding: '1.25rem',
         marginBottom: '1rem',
@@ -76,7 +78,7 @@ export const GuestbookCard: React.FC<GuestbookCardProps> = ({
 
         {/* STATUS BADGE */}
         <div>
-          {entry.status === 'approved' ? (
+          {isApproved ? (
             <Badge variant="shipped" style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(56, 239, 125, 0.1)', color: 'var(--emerald)' }}>
               <CheckCircle2 size={12} /> Approved
             </Badge>
@@ -104,7 +106,7 @@ export const GuestbookCard: React.FC<GuestbookCardProps> = ({
       {/* ADMIN CONTROLS ROW */}
       {isAdmin && (
         <div style={{ marginTop: '1rem', paddingTop: '0.5rem', borderTop: '1px dashed rgba(255,255,255,0.1)', display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-          {entry.status === 'pending' && onApprove && (
+          {isPending && onApprove && (
             <button
               onClick={() => onApprove(entry.id)}
               style={{ background: 'rgba(56, 239, 125, 0.2)', border: '1px solid var(--emerald)', color: 'var(--emerald)', borderRadius: '4px', padding: '3px 8px', fontSize: '0.75rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
