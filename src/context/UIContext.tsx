@@ -68,9 +68,9 @@ export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const closeAIChat = useCallback(() => setIsAIChatOpen(false), []);
   const toggleAIChat = useCallback(() => setIsAIChatOpen(prev => !prev), []);
 
-  const openAnalytics = useCallback(() => setIsAnalyticsOpen(true), []);
-  const closeAnalytics = useCallback(() => setIsAnalyticsOpen(false), []);
-  const toggleAnalytics = useCallback(() => setIsAnalyticsOpen(prev => !prev), []);
+  const openAnalytics = useCallback(() => setIsAdminPanelOpen(true), []);
+  const closeAnalytics = useCallback(() => setIsAdminPanelOpen(false), []);
+  const toggleAnalytics = useCallback(() => setIsAdminPanelOpen(prev => !prev), []);
 
   const openGuestbookForm = useCallback(() => setIsGuestbookFormOpen(true), []);
   const closeGuestbookForm = useCallback(() => setIsGuestbookFormOpen(false), []);

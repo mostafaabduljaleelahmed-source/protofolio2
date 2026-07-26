@@ -33,6 +33,12 @@ export interface ToastMessage {
   type: 'info' | 'success' | 'warning' | 'error';
 }
 
+export interface PublicSocialProof {
+  totalVisitors: number;
+  countriesCount: number;
+  projectsCompleted: number;
+}
+
 export interface AnalyticsSummary {
   totalVisitors: number;
   todayVisitors: number;

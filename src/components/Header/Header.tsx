@@ -3,10 +3,10 @@ import { SITE_CONFIG } from '../../config/siteConfig';
 import { useUI } from '../../context/UIContext';
 import { useAudio } from '../../context/AudioContext';
 import { easterEggService } from '../../services/easterEggService';
-import { BarChart3, PenTool, Trophy } from 'lucide-react';
+import { PenTool, Trophy } from 'lucide-react';
 
 export const Header: React.FC = () => {
-  const { showToast, setMatrixMode, openCommandPalette, openAnalytics, openGuestbookForm, openAchievements } = useUI();
+  const { showToast, setMatrixMode, openCommandPalette, openGuestbookForm, openAchievements } = useUI();
   const { isMuted, toggleMute, playClick } = useAudio();
   const [logoClicks, setLogoClicks] = useState<number>(0);
 
@@ -80,31 +80,6 @@ export const Header: React.FC = () => {
           }}
         >
           <PenTool size={13} /> Guestbook
-        </button>
-
-        <button
-          className="header-btn"
-          onClick={() => {
-            playClick();
-            openAnalytics();
-          }}
-          title="Open Realtime Analytics Dashboard"
-          aria-label="Open Realtime Analytics Dashboard"
-          style={{
-            background: 'rgba(255,255,255,0.03)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            color: 'var(--accent)',
-            padding: '4px 10px',
-            borderRadius: '4px',
-            fontSize: '0.75rem',
-            fontFamily: 'DM Mono, monospace',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px'
-          }}
-        >
-          <BarChart3 size={13} /> Analytics
         </button>
 
         <button

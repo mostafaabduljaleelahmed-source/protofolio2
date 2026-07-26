@@ -10,7 +10,6 @@ export const CommandPalette: React.FC = () => {
     toggleCommandPalette,
     showToast,
     toggleAIChat,
-    openAnalytics,
     openGuestbookForm,
     openAdminPanel,
     openAchievements,
@@ -63,10 +62,6 @@ export const CommandPalette: React.FC = () => {
         break;
       case 'guestbook':
         openGuestbookForm();
-        break;
-      case 'analytics':
-        openAnalytics();
-        showToast('TELEMETRY DASHBOARD', 'Supabase Analytics Realtime Interface Opened.');
         break;
       case 'matrix':
         setMatrixMode(prev => !prev);
@@ -130,10 +125,6 @@ export const CommandPalette: React.FC = () => {
           <div className="cmdk-item" onClick={() => handleCommandSelect('guestbook')}>
             <span>&gt; Sign Operating Environment Guestbook</span>
             <code>Community</code>
-          </div>
-          <div className="cmdk-item" onClick={() => handleCommandSelect('analytics')}>
-            <span>&gt; Open Realtime Analytics Dashboard</span>
-            <code>Supabase</code>
           </div>
           <div className="cmdk-item" onClick={() => handleCommandSelect('matrix')}>
             <span>&gt; Toggle Matrix Digital Rain</span>

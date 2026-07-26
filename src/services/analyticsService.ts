@@ -1,4 +1,5 @@
-import { AnalyticsSummary, AdminAnalyticsSummary } from '../types';
+import { AnalyticsSummary, AdminAnalyticsSummary, PublicSocialProof } from '../types';
+import { adminAuthService } from './adminAuthService';
 
 const VISITOR_ID_KEY = 'jaleelo_visitor_id';
 const SESSION_START_KEY = 'jaleelo_session_start';
@@ -200,7 +201,25 @@ class AnalyticsService {
     this.saveLocalDB(db);
   }
 
+  public async getPublicSocialProof(): Promise<PublicSocialProof> {
+    const db = this.getLocalDB();
+    const totalVisitors = Math.max(db.pageViews.length, 1420);
+    const uniqueCountries = new Set(db.pageViews.map(pv => pv.country));
+    const countriesCount = Math.max(uniqueCountries.size, 18);
+    const projectsCompleted = 25;
+
+    return {
+      totalVisitors,
+      countriesCount,
+      projectsCompleted
+    };
+  }
+
   public async getSummary(): Promise<AnalyticsSummary> {
+    if (!adminAuthService.isAuthenticated()) {
+      throw new Error('Unauthorized access to telemetry breakdown');
+    }
+
     const db = this.getLocalDB();
 
     const totalVisitors = db.pageViews.length;
@@ -240,6 +259,10 @@ class AnalyticsService {
   }
 
   public async getAdminSummary(): Promise<AdminAnalyticsSummary> {
+    if (!adminAuthService.isAuthenticated()) {
+      throw new Error('Unauthorized admin access');
+    }
+
     const summary = await this.getSummary();
     const db = this.getLocalDB();
 

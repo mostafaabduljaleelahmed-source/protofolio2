@@ -23,9 +23,6 @@ const CommandPalette = lazy(() =>
 const AIChat = lazy(() =>
   import('./components/AIChat/AIChat').then(m => ({ default: m.AIChat }))
 );
-const AnalyticsDashboard = lazy(() =>
-  import('./components/Analytics/AnalyticsDashboard').then(m => ({ default: m.AnalyticsDashboard }))
-);
 const GuestbookFormModal = lazy(() =>
   import('./components/Guestbook/GuestbookFormModal').then(m => ({ default: m.GuestbookFormModal }))
 );
@@ -86,7 +83,6 @@ const PortfolioAppContent: React.FC = () => {
       <Suspense fallback={null}>
         <CommandPalette />
         <AIChat />
-        <AnalyticsDashboard />
         <GuestbookFormModal />
         <GuestbookAdminModal />
         <AdminPanelModal />

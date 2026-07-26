@@ -1,4 +1,5 @@
 import React from 'react';
+import { SocialProofBadge } from '../common/SocialProofBadge';
 
 export const About: React.FC = () => {
   return (
@@ -11,6 +12,7 @@ export const About: React.FC = () => {
             <p className="manifesto">
               I believe software engineering should eliminate ambiguity. Whether it is an API endpoint, a Flutter screen, or an AI workflow—reliability comes from structure.
             </p>
+            <SocialProofBadge />
           </div>
           <div className="pillars">
             <div className="pillar">
