@@ -82,15 +82,16 @@ body.slow-mo .slow-mo-aura { opacity: 1; }
 
 .hero-main-layout {
   display: grid;
-  grid-template-columns: minmax(320px, 1.2fr) minmax(300px, 0.8fr);
-  gap: clamp(20px, 4vw, 60px);
+  grid-template-columns: 1fr;
+  max-width: 860px;
+  gap: 32px;
   align-items: center;
   position: relative;
   z-index: 5;
 }
 
 .hero-copy {
-  max-width: 680px;
+  max-width: 840px;
   position: relative;
 }
 .eyebrow {
@@ -107,24 +108,26 @@ body.slow-mo .slow-mo-aura { opacity: 1; }
   background: currentColor;
 }
 .hero-title {
-  font-size: clamp(42px, 7vw, 102px);
-  line-height: .92;
-  letter-spacing: -.055em;
+  font-size: clamp(38px, 6vw, 84px);
+  line-height: 1.05;
+  letter-spacing: -.035em;
   font-weight: 800;
   margin: 0;
   color: var(--ink);
 }
 .hero-title em {
   font-style: normal;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(136, 217, 255, 0.85);
-  text-shadow: 0 0 30px rgba(136, 217, 255, 0.2);
+  color: var(--accent);
+  background: linear-gradient(135deg, #ffffff 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 40px rgba(136, 217, 255, 0.25);
 }
 .hero-subtitle {
-  max-width: 540px;
+  max-width: 720px;
   margin: 24px 0 0;
-  font-size: clamp(15px, 1.2vw, 18px);
-  line-height: 1.6;
+  font-size: clamp(16px, 1.4vw, 20px);
+  line-height: 1.65;
   color: var(--quiet);
 }
 

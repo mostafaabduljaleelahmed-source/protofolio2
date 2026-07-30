@@ -1,28 +1,27 @@
 import React from 'react';
 import { TerminalCLI } from './TerminalCLI';
 import { SITE_CONFIG } from '../../config/siteConfig';
-import { FileText, Github, Linkedin, Mail, ArrowUpRight, CheckCircle2 } from 'lucide-react';
+import { FileText, Github, Linkedin, Mail, ArrowUpRight } from 'lucide-react';
 
 export const Hero: React.FC = () => {
   return (
-    <section className="hero-playground" id="hero-section" aria-label="Candidate Overview & Hero Section">
-      {/* MAIN HERO CONTENT & PORTRAIT CARD */}
-      <div className="hero-main-layout">
+    <section className="hero-playground" id="hero-section" aria-label="Candidate Overview & Hero Section" style={{ padding: '4rem 0 3rem 0' }}>
+      <div className="hero-main-layout" style={{ maxWidth: '860px', margin: '0 left' }}>
         <div className="hero-copy">
-          <div className="eyebrow" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: 'var(--emerald)' }}></span>
+          <div className="eyebrow" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.6rem', padding: '0.4rem 0.9rem', borderRadius: '20px', background: 'rgba(56, 239, 125, 0.08)', border: '1px solid rgba(56, 239, 125, 0.2)', fontSize: '0.8rem', color: 'var(--emerald)', marginBottom: '1.5rem' }}>
+            <span style={{ display: 'inline-block', width: '7px', height: '7px', borderRadius: '50%', background: 'var(--emerald)', boxShadow: '0 0 8px var(--emerald)' }}></span>
             Available for Software Engineering Roles & Internships
           </div>
           
-          <h1 className="hero-title" style={{ marginTop: '0.5rem', marginBottom: '1.25rem' }}>
-            Systems, Backend Architecture & <em>AI Automation.</em>
+          <h1 className="hero-title" style={{ fontSize: 'clamp(2.4rem, 5vw, 3.8rem)', fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.02em', marginTop: '0.25rem', marginBottom: '1.5rem', color: '#ffffff' }}>
+            Systems, Backend Architecture & <em style={{ fontStyle: 'normal', color: 'var(--accent)', background: 'linear-gradient(135deg, #ffffff 0%, var(--accent) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>AI Automation.</em>
           </h1>
           
-          <p className="hero-subtitle" style={{ fontSize: '1.1rem', lineHeight: '1.6', color: 'var(--text-secondary)' }}>
-            I’m <strong>Mostafa Abduljaleel</strong>, a Computer Science student at Cairo University specializing in <strong>.NET 8 / C# REST APIs</strong>, high-performance relational databases, and autonomous AI automation pipelines.
+          <p className="hero-subtitle" style={{ fontSize: 'clamp(1.05rem, 2vw, 1.25rem)', lineHeight: '1.65', color: 'var(--text-secondary)', maxWidth: '740px', marginBottom: '2rem' }}>
+            I’m <strong>Mostafa Abduljaleel</strong>, a Computer Science student at Cairo University specializing in <strong>.NET 8 / C# REST APIs</strong>, high-performance relational databases, and autonomous AI automation workflows.
           </p>
 
-          <div className="hero-cta-group" style={{ margin: '1.75rem 0', display: 'flex', flexWrap: 'wrap', gap: '0.85rem' }}>
+          <div className="hero-cta-group" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
             <a
               href={SITE_CONFIG.github}
               target="_blank"
@@ -32,16 +31,18 @@ export const Hero: React.FC = () => {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.5rem',
-                padding: '0.75rem 1.4rem',
-                borderRadius: '6px',
+                padding: '0.85rem 1.6rem',
+                borderRadius: '8px',
                 background: 'var(--accent)',
-                color: '#000',
-                fontWeight: 600,
+                color: '#000000',
+                fontWeight: 700,
                 textDecoration: 'none',
-                fontSize: '0.9rem'
+                fontSize: '0.95rem',
+                boxShadow: '0 4px 20px rgba(136, 217, 255, 0.25)',
+                transition: 'transform 0.2s ease, boxShadow 0.2s ease'
               }}
             >
-              <FileText size={16} /> View Resume <ArrowUpRight size={15} />
+              <FileText size={17} /> View Resume <ArrowUpRight size={16} />
             </a>
 
             <a
@@ -51,13 +52,14 @@ export const Hero: React.FC = () => {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.5rem',
-                padding: '0.75rem 1.4rem',
-                borderRadius: '6px',
-                background: 'rgba(255, 255, 255, 0.05)',
+                padding: '0.85rem 1.6rem',
+                borderRadius: '8px',
+                background: 'rgba(255, 255, 255, 0.04)',
                 border: '1px solid rgba(255, 255, 255, 0.12)',
-                color: '#fff',
+                color: '#ffffff',
                 textDecoration: 'none',
-                fontSize: '0.9rem'
+                fontSize: '0.95rem',
+                fontWeight: 500
               }}
             >
               Explore Case Studies ↓
@@ -70,119 +72,46 @@ export const Hero: React.FC = () => {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.5rem',
-                padding: '0.75rem 1.2rem',
-                borderRadius: '6px',
+                padding: '0.85rem 1.4rem',
+                borderRadius: '8px',
                 background: 'transparent',
                 border: '1px solid rgba(255, 255, 255, 0.08)',
                 color: 'var(--text-muted)',
                 textDecoration: 'none',
-                fontSize: '0.9rem'
+                fontSize: '0.95rem'
               }}
             >
-              <Mail size={15} /> Email Direct
+              <Mail size={16} /> Direct Email
             </a>
           </div>
 
           {/* QUICK LINKS */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginTop: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.75rem', marginBottom: '2.5rem' }}>
             <a
               href={SITE_CONFIG.github}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem', textDecoration: 'none', fontSize: '0.85rem' }}
+              style={{ color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '0.4rem', textDecoration: 'none', fontSize: '0.9rem', transition: 'color 0.2s' }}
             >
-              <Github size={15} /> GitHub Profile
+              <Github size={16} /> GitHub Profile
             </a>
             <a
               href={SITE_CONFIG.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem', textDecoration: 'none', fontSize: '0.85rem' }}
+              style={{ color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '0.4rem', textDecoration: 'none', fontSize: '0.9rem', transition: 'color 0.2s' }}
             >
-              <Linkedin size={15} /> LinkedIn
+              <Linkedin size={16} /> LinkedIn
             </a>
           </div>
 
-          <div style={{ marginTop: '2rem' }}>
+          <div>
             <TerminalCLI />
-          </div>
-        </div>
-
-        {/* RIGHT: AUTHENTIC ENGINEER PORTRAIT CARD */}
-        <div className="portrait-card-container" style={{ flexShrink: 0, width: '100%', maxWidth: '360px' }}>
-          <div
-            style={{
-              borderRadius: '16px',
-              background: 'rgba(255, 255, 255, 0.025)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              padding: '1.5rem',
-              boxShadow: '0 20px 40px rgba(0,0,0,0.4)'
-            }}
-          >
-            {/* PORTRAIT IMAGE */}
-            <div
-              style={{
-                width: '100%',
-                height: '240px',
-                borderRadius: '12px',
-                overflow: 'hidden',
-                position: 'relative',
-                background: '#111',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                marginBottom: '1.25rem'
-              }}
-            >
-              <img
-                src={SITE_CONFIG.avatarUrl}
-                alt="Mostafa Abduljaleel - Software Engineer"
-                style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'contrast(1.05) brightness(0.95)' }}
-              />
-              <div
-                style={{
-                  position: 'absolute',
-                  bottom: '10px',
-                  left: '10px',
-                  background: 'rgba(0,0,0,0.75)',
-                  backdropFilter: 'blur(8px)',
-                  padding: '4px 10px',
-                  borderRadius: '20px',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  fontSize: '0.75rem',
-                  color: '#fff',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}
-              >
-                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--emerald)' }}></span>
-                Cairo, Egypt
-              </div>
-            </div>
-
-            {/* CANDIDATE QUICK SUMMARY */}
-            <h3 style={{ margin: '0 0 0.35rem 0', fontSize: '1.15rem', color: '#fff' }}>{SITE_CONFIG.name}</h3>
-            <p style={{ margin: '0 0 1rem 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              Faculty of Computers & Artificial Intelligence, Cairo University
-            </p>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <CheckCircle2 size={14} color="var(--accent)" />
-                <span><strong>Core:</strong> .NET 8, C#, SQL Server, REST API</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <CheckCircle2 size={14} color="var(--emerald)" />
-                <span><strong>Automation:</strong> Python, Selenium, Playwright</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <CheckCircle2 size={14} color="var(--purple)" />
-                <span><strong>Mobile & AI:</strong> Flutter, Claude API Integration</span>
-              </div>
-            </div>
           </div>
         </div>
       </div>
     </section>
   );
 };
+
 
