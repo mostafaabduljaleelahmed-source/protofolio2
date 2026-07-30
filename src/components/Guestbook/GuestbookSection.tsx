@@ -50,14 +50,6 @@ export const GuestbookSection: React.FC = () => {
             >
               Sign Guestbook
             </Button>
-            <Button
-              variant="ghost"
-              onClick={openGuestbookAdmin}
-              leftIcon={<ShieldAlert size={15} />}
-              title="Admin Moderation Panel"
-            >
-              Admin Mode
-            </Button>
           </div>
         </div>
 

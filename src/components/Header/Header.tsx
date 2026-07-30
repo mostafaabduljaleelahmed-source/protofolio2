@@ -3,11 +3,11 @@ import { SITE_CONFIG } from '../../config/siteConfig';
 import { useUI } from '../../context/UIContext';
 import { useAudio } from '../../context/AudioContext';
 import { easterEggService } from '../../services/easterEggService';
-import { PenTool, Trophy } from 'lucide-react';
+import { PenTool, FileText, Terminal } from 'lucide-react';
 
 export const Header: React.FC = () => {
-  const { showToast, setMatrixMode, openCommandPalette, openGuestbookForm, openAchievements, openPinModal } = useUI();
-  const { isMuted, toggleMute, playClick } = useAudio();
+  const { showToast, openCommandPalette, openGuestbookForm, openPinModal } = useUI();
+  const { playClick } = useAudio();
   const [clickTimestamps, setClickTimestamps] = useState<number[]>([]);
 
   const handleLogoClick = (e: React.MouseEvent) => {
@@ -21,42 +21,54 @@ export const Header: React.FC = () => {
     if (recent.length >= 5) {
       setClickTimestamps([]);
       easterEggService.unlockAchievement('dev_mode');
-      showToast('SECRET TRIGGER DETECTED', 'Authenticating Admin Access...');
+      showToast('ADMIN AUTHENTICATION', 'Prompting Pin Verification...');
       openPinModal();
     }
   };
 
   return (
     <header>
-      <a className="brand" id="brand-logo" title="JALEELO Portfolio Operating System" onClick={handleLogoClick} href="#top">
-        JALEEL<b>O</b> <span className="brand-badge">{SITE_CONFIG.version}</span>
+      <a className="brand" id="brand-logo" title="Mostafa Abduljaleel Portfolio" onClick={handleLogoClick} href="#top">
+        MOSTAFA <b>ABDULJALEEL</b> <span className="brand-badge">{SITE_CONFIG.version}</span>
       </a>
 
+      <nav className="header-nav" aria-label="Main Navigation" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+        <a href="#work" className="nav-link" style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500 }}>
+          Projects
+        </a>
+        <a href="#philosophy" className="nav-link" style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500 }}>
+          Philosophy
+        </a>
+        <a href="#contact" className="nav-link" style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500 }}>
+          Contact
+        </a>
+      </nav>
+
       <div className="header-controls" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-        <button
+        <a
+          href={SITE_CONFIG.github}
+          target="_blank"
+          rel="noopener noreferrer"
           className="header-btn"
-          onClick={() => {
-            playClick();
-            openAchievements();
-          }}
-          title="View Secret System Achievements"
-          aria-label="View Secret System Achievements"
+          title="View Resume Document"
+          aria-label="Download Resume"
           style={{
-            background: 'rgba(255,255,255,0.03)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            color: 'var(--orange)',
-            padding: '4px 10px',
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.12)',
+            color: '#ffffff',
+            padding: '5px 12px',
             borderRadius: '4px',
             fontSize: '0.75rem',
             fontFamily: 'DM Mono, monospace',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            gap: '4px'
+            gap: '5px',
+            textDecoration: 'none'
           }}
         >
-          <Trophy size={13} /> Badges
-        </button>
+          <FileText size={13} color="var(--accent)" /> Resume
+        </a>
 
         <button
           className="header-btn"
@@ -64,13 +76,13 @@ export const Header: React.FC = () => {
             playClick();
             openGuestbookForm();
           }}
-          title="Sign Operating Environment Guestbook"
-          aria-label="Sign Operating Environment Guestbook"
+          title="Sign Environment Guestbook"
+          aria-label="Sign Guestbook"
           style={{
             background: 'rgba(255,255,255,0.03)',
             border: '1px solid rgba(255,255,255,0.1)',
-            color: '#ffffff',
-            padding: '4px 10px',
+            color: 'var(--text-secondary)',
+            padding: '5px 10px',
             borderRadius: '4px',
             fontSize: '0.75rem',
             fontFamily: 'DM Mono, monospace',
@@ -95,43 +107,20 @@ export const Header: React.FC = () => {
             background: 'rgba(255,255,255,0.03)',
             border: '1px solid rgba(255,255,255,0.1)',
             color: 'var(--text-muted)',
-            padding: '4px 10px',
+            padding: '5px 10px',
             borderRadius: '4px',
             fontSize: '0.75rem',
             fontFamily: 'DM Mono, monospace',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px'
           }}
         >
-          ⌘K
+          <Terminal size={12} /> ⌘K
         </button>
-
-        <button
-          className="header-btn"
-          onClick={() => {
-            toggleMute();
-          }}
-          title={isMuted ? 'Unmute Synthesizer Audio' : 'Mute Synthesizer Audio'}
-          aria-label="Toggle Audio Mute"
-          style={{
-            background: 'rgba(255,255,255,0.03)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            color: isMuted ? 'var(--text-dim)' : 'var(--accent)',
-            padding: '4px 10px',
-            borderRadius: '4px',
-            fontSize: '0.75rem',
-            fontFamily: 'DM Mono, monospace',
-            cursor: 'pointer'
-          }}
-        >
-          {isMuted ? '🔇 Muted' : '🔊 Sound On'}
-        </button>
-
-        <div className="meta">
-          <span>{SITE_CONFIG.location}</span>
-          <i className="pulse" aria-hidden="true"></i>
-          <span>SYSTEM ACTIVE</span>
-        </div>
       </div>
     </header>
   );
 };
+

@@ -1,5 +1,6 @@
 import { AnalyticsSummary, AdminAnalyticsSummary, PublicSocialProof } from '../types';
 import { adminAuthService } from './adminAuthService';
+import { SITE_CONFIG } from '../config/siteConfig';
 
 const VISITOR_ID_KEY = 'jaleelo_visitor_id';
 const SESSION_START_KEY = 'jaleelo_session_start';
@@ -203,10 +204,10 @@ class AnalyticsService {
 
   public async getPublicSocialProof(): Promise<PublicSocialProof> {
     const db = this.getLocalDB();
-    const totalVisitors = Math.max(db.pageViews.length, 1420);
+    const totalVisitors = db.pageViews.length;
     const uniqueCountries = new Set(db.pageViews.map(pv => pv.country));
-    const countriesCount = Math.max(uniqueCountries.size, 18);
-    const projectsCompleted = 25;
+    const countriesCount = uniqueCountries.size;
+    const projectsCompleted = SITE_CONFIG.projects.length;
 
     return {
       totalVisitors,

@@ -36,19 +36,15 @@ const GuestbookAdminModal = lazy(() =>
 const AdminPanelModal = lazy(() =>
   import('./components/Admin/AdminPanelModal').then(m => ({ default: m.AdminPanelModal }))
 );
-const AchievementsModal = lazy(() =>
-  import('./components/EasterEggs/AchievementsModal').then(m => ({ default: m.AchievementsModal }))
-);
 
 const PortfolioAppContent: React.FC = () => {
   const { showToast, isPinModalOpen, openPinModal, closePinModal, openAdminPanel } = useUI();
 
   useEffect(() => {
     const cleanupCursor = initCustomCursor();
-    const cleanupKonami = easterEggService.init(showToast);
     analyticsService.trackPageView();
 
-    // Initialize secret easter egg triggers (Ctrl+Shift+A & typing "admin")
+    // Initialize secret admin triggers (Ctrl+Shift+A & typing "admin")
     const triggerMgr = new AdminTriggerManager(() => {
       if (adminAuthService.isAuthenticated()) {
         openAdminPanel();
@@ -70,7 +66,6 @@ const PortfolioAppContent: React.FC = () => {
 
     return () => {
       cleanupCursor();
-      cleanupKonami();
       cleanupTriggers();
     };
   }, [showToast, openPinModal, openAdminPanel]);
@@ -91,9 +86,6 @@ const PortfolioAppContent: React.FC = () => {
       <div id="custom-cursor" aria-hidden="true"></div>
       <div id="cursor-dot" aria-hidden="true"></div>
 
-      {/* MATRIX CANVAS OVERLAY */}
-      <canvas id="matrix-canvas" aria-hidden="true"></canvas>
-
       {/* 3D LIVING WORLD CANVAS & GRAIN */}
       <WorldCanvas />
       <div className="grain" aria-hidden="true"></div>
@@ -105,8 +97,8 @@ const PortfolioAppContent: React.FC = () => {
       <Header />
       <main id="main-content" tabIndex={-1}>
         <Hero />
-        <About />
         <Projects />
+        <About />
         <Experiments />
         <GuestbookSection />
         <Contact />
@@ -121,7 +113,6 @@ const PortfolioAppContent: React.FC = () => {
         <GuestbookFormModal />
         <GuestbookAdminModal />
         <AdminPanelModal />
-        <AchievementsModal />
       </Suspense>
       <AdminPinModal isOpen={isPinModalOpen} onClose={closePinModal} onSuccess={handlePinSuccess} />
       <Toast />

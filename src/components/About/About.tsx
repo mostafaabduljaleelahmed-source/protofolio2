@@ -1,31 +1,29 @@
 import React from 'react';
-import { SocialProofBadge } from '../common/SocialProofBadge';
 
 export const About: React.FC = () => {
   return (
     <section className="scene about" id="philosophy">
       <div>
-        <div className="eyebrow">System philosophy / 03</div>
+        <div className="eyebrow">Engineering Philosophy / 02</div>
         <div className="philosophy">
           <div>
             <h2>Clear contracts.<br />Deterministic output.<br />No magic.</h2>
             <p className="manifesto">
-              I believe software engineering should eliminate ambiguity. Whether it is an API endpoint, a Flutter screen, or an AI workflow—reliability comes from structure.
+              Software engineering is about eliminating ambiguity. Reliability comes from strong schema contracts, predictable API state management, and clear technical boundaries.
             </p>
-            <SocialProofBadge />
           </div>
           <div className="pillars">
             <div className="pillar">
-              <h3>01 / Architecture First</h3>
-              <p>Designing backend schemas and data contracts before writing code prevents refactoring cycles and technical debt.</p>
+              <h3>01 / Schema & Architecture First</h3>
+              <p>Designing backend schemas, domain models, and API data contracts before writing code prevents refactoring churn and technical debt.</p>
             </div>
             <div className="pillar">
               <h3>02 / Automation as Leverage</h3>
-              <p>Repeated human tasks are engineering failures. I automate workflows using Python, Selenium, and LLMs.</p>
+              <p>Repetitive manual tasks represent system design opportunities. I automate processes using Python scripts, webhooks, and AI agent workflows.</p>
             </div>
             <div className="pillar">
-              <h3>03 / User Precision</h3>
-              <p>Interfaces should be fast, crisp, and tactile. Micro-interactions and subtle audio feedback turn apps into instruments.</p>
+              <h3>03 / User & API Precision</h3>
+              <p>Systems should be responsive, fast, and reliable. Strict input validation and sub-100ms API responses create authentic developer trust.</p>
             </div>
           </div>
         </div>
@@ -33,3 +31,4 @@ export const About: React.FC = () => {
     </section>
   );
 };
+

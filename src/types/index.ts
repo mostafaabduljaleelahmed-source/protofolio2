@@ -2,8 +2,15 @@ export interface ProjectCase {
   number: string;
   title: string;
   meta: string;
-  pressure: string;
-  response: string;
+  summary: string;
+  problem: string;
+  goal: string;
+  architecture: string;
+  architectureDiagram?: string[];
+  challenges: string[];
+  decisions: string[];
+  technologies: string[];
+  results: string[];
   link?: string;
   code?: string;
 }
