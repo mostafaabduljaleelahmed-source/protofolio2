@@ -37,6 +37,13 @@ body.cursor-active #custom-cursor {
   background: rgba(232, 154, 97, 0.35);
 }
 
+/* Disable custom cursor on mobile touch devices */
+@media (pointer: coarse), (max-width: 768px) {
+  #custom-cursor, #cursor-dot {
+    display: none !important;
+  }
+}
+
 /* MATRIX RAIN CANVAS OVERLAY */
 #matrix-canvas {
   position: fixed;
@@ -95,3 +102,14 @@ body.matrix-active #matrix-canvas {
   animation: pulse 2.2s ease-in-out infinite;
 }
 @keyframes pulse { 50% { opacity: .3; transform: scale(.7); } }
+
+/* PREFERS-REDUCED-MOTION */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+

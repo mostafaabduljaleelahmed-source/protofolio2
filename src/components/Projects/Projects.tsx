@@ -52,11 +52,14 @@ export const Projects: React.FC = () => {
                 <div
                   onClick={() => handleToggle(idx, project.title)}
                   style={{
-                    padding: '1.5rem 1.75rem',
+                    padding: 'clamp(1rem, 2.5vw, 1.75rem)',
                     cursor: 'pointer',
                     display: 'flex',
+                    flexWrap: 'wrap',
                     justifyContent: 'space-between',
                     alignItems: 'center',
+                    gap: '1rem',
+                    minHeight: 'var(--min-touch-target)',
                     background: isExpanded ? 'rgba(255, 255, 255, 0.03)' : 'transparent',
                     userSelect: 'none'
                   }}
@@ -68,29 +71,30 @@ export const Projects: React.FC = () => {
                   }}
                   aria-expanded={isExpanded}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: '1 1 240px' }}>
                     <span
                       style={{
                         fontFamily: 'DM Mono, monospace',
-                        fontSize: '1rem',
+                        fontSize: '0.9rem',
                         color: 'var(--accent)',
                         fontWeight: 700,
                         padding: '4px 8px',
                         borderRadius: '4px',
-                        background: 'rgba(255,255,255,0.05)'
+                        background: 'rgba(255,255,255,0.05)',
+                        flexShrink: 0
                       }}
                     >
                       {project.number}
                     </span>
                     <div>
-                      <h3 style={{ margin: 0, fontSize: '1.35rem', color: '#ffffff' }}>{project.title}</h3>
+                      <h3 style={{ margin: 0, fontSize: 'clamp(1.1rem, 2vw, 1.4rem)', color: '#ffffff' }}>{project.title}</h3>
                       <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
                         {project.meta}
                       </div>
                     </div>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginLeft: 'auto' }}>
                     <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                       {project.technologies.slice(0, 3).map((tech, tIdx) => (
                         <span
@@ -114,7 +118,7 @@ export const Projects: React.FC = () => {
 
                 {/* CASE STUDY EXPANDED BODY */}
                 {isExpanded && (
-                  <div style={{ padding: '1.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.07)' }}>
+                  <div style={{ padding: 'clamp(1rem, 2.5vw, 1.75rem)', borderTop: '1px solid rgba(255, 255, 255, 0.07)' }}>
                     {/* SUMMARY & GOAL */}
                     <div style={{ marginBottom: '1.75rem' }}>
                       <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
@@ -129,8 +133,8 @@ export const Projects: React.FC = () => {
                     <div
                       style={{
                         display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                        gap: '1.5rem',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+                        gap: '1.25rem',
                         marginBottom: '1.75rem'
                       }}
                     >
@@ -168,13 +172,14 @@ export const Projects: React.FC = () => {
                             background: '#090d16',
                             border: '1px solid rgba(255, 255, 255, 0.1)',
                             borderRadius: '8px',
-                            padding: '1.25rem',
+                            padding: '1rem',
                             fontFamily: 'DM Mono, monospace',
-                            fontSize: '0.8rem',
+                            fontSize: '0.75rem',
                             color: 'var(--accent)',
                             overflowX: 'auto',
                             whiteSpace: 'pre',
-                            lineHeight: '1.4'
+                            lineHeight: '1.4',
+                            maxWidth: '100%'
                           }}
                         >
                           {project.architectureDiagram.join('\n')}
@@ -186,8 +191,8 @@ export const Projects: React.FC = () => {
                     <div
                       style={{
                         display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                        gap: '1.5rem',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+                        gap: '1.25rem',
                         marginBottom: '1.75rem'
                       }}
                     >
@@ -251,7 +256,7 @@ export const Projects: React.FC = () => {
                     </div>
 
                     {/* ACTION LINKS */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
                       {project.code && (
                         <a
                           href={project.code}
@@ -260,18 +265,21 @@ export const Projects: React.FC = () => {
                           style={{
                             display: 'inline-flex',
                             alignItems: 'center',
-                            gap: '0.4rem',
-                            padding: '0.5rem 1rem',
-                            borderRadius: '6px',
+                            justifyContent: 'center',
+                            gap: '0.5rem',
+                            padding: '0.75rem 1.25rem',
+                            minHeight: 'var(--min-touch-target)',
+                            borderRadius: '8px',
                             background: 'rgba(255,255,255,0.06)',
                             border: '1px solid rgba(255,255,255,0.12)',
                             color: '#ffffff',
                             textDecoration: 'none',
                             fontSize: '0.85rem',
-                            fontWeight: 500
+                            fontWeight: 500,
+                            flex: '1 1 180px'
                           }}
                         >
-                          <Github size={14} /> Repository Code
+                          <Github size={16} /> Repository Code
                         </a>
                       )}
                       {project.link && (
@@ -282,17 +290,20 @@ export const Projects: React.FC = () => {
                           style={{
                             display: 'inline-flex',
                             alignItems: 'center',
-                            gap: '0.4rem',
-                            padding: '0.5rem 1rem',
-                            borderRadius: '6px',
+                            justifyContent: 'center',
+                            gap: '0.5rem',
+                            padding: '0.75rem 1.25rem',
+                            minHeight: 'var(--min-touch-target)',
+                            borderRadius: '8px',
                             background: 'var(--accent)',
                             color: '#000000',
                             textDecoration: 'none',
                             fontSize: '0.85rem',
-                            fontWeight: 600
+                            fontWeight: 700,
+                            flex: '1 1 180px'
                           }}
                         >
-                          <ExternalLink size={14} /> Live Demonstration
+                          <ExternalLink size={16} /> Live Demonstration
                         </a>
                       )}
                     </div>
